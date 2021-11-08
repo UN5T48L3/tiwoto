@@ -24,7 +24,6 @@ else:
     os.system("cls") if os.name == "nt" else os.system("clear")
     exit()
 
-# Setup tweepy API Authentication
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
@@ -33,11 +32,8 @@ sleep(1)
 os.system("cls") if os.name == "nt" else os.system("clear")
 
 
-# Create a function that favorites latest 10 tweets on your timeline
 def fav_timeline():
-    # We will use the cursor to iterate through the tweets
     for tweet in tweepy.Cursor(api.home_timeline).items(500):
-        # We will only favorite the tweets that have not been favorited yet
         if not tweet.favorited:
             try:
                 tweet.favorite()
@@ -48,71 +44,79 @@ def fav_timeline():
             except StopIteration:
                 break
 
-# Create a function that check latest tweets about #cybersecurity, #hacking, #infosec and favorite them if they have more than 100 retweets
-def fav_follow():
-    # We will use the cursor to iterate through the tweets
+def ht_follow():
     print("Please enter 4 hashtags!")
-    ht1 = input("Enter hashtag 1: ")
-    ht2 = input("Enter hashtag 2: ")
-    ht3 = input("Enter hashtag 3: ")
-    ht4 = input("Enter hashtag 4: ")
-    hashtags = (ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4)
-    for tweet in tweepy.Cursor(api.search, q=hashtags, lang="en", result_type="latest").items(999):
-        # We will only favorite the tweets that have not been favorited yet
+    ht1 = (str(input("Enter hashtag 1: ")))
+    ht2 = (str(input("Enter hashtag 2: ")))
+    ht3 = (str(input("Enter hashtag 3: ")))
+    ht4 = (str(input("Enter hashtag 4: ")))
+    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4, lang="en",  ).items(500):
+        if not tweet.favorited and not tweet.retweeted:
+            try:
+                if tweet.retweet_count >= 9 and not tweet.user.following:
+                    tweet.user.follow()
+                    print("Followed: ", tweet.user.screen_name + "\n")
+                    sleep(randint(1, 5))
+            except tweepy.TweepError as e:
+                print(e.reason)
+            except StopIteration:
+                break
+
+def ht_fav():
+    print("Please enter 4 hashtags!")
+    ht1 = (str(input("Enter hashtag 1: ")))
+    ht2 = (str(input("Enter hashtag 2: ")))
+    ht3 = (str(input("Enter hashtag 3: ")))
+    ht4 = (str(input("Enter hashtag 4: ")))
+    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4, lang="en" ).items(500):
         if not tweet.favorited:
             try:
-                if tweet.favorite_count >= 2 and tweet.retweet_count >= 1:
+                if tweet.retweet_count >= 9:
                     tweet.favorite()
                     print("Liked: ", tweet.text + "\n")
-                    sleep(randint(9, 23))
-                    if not tweet.user.following and not tweet.user.followers_count >= 50 and not tweet.user.friends_count >= 100:
-                        tweet.user.follow()
-                        print("Followed: ", tweet.user.screen_name)
-                    sleep(randint(3, 13))
+                    sleep(randint(2, 5))
             except tweepy.TweepError as e:
                 print(e.reason)
             except StopIteration:
                 break
 
+def save_following():
+    os.system("cls") if os.name == "nt" else os.system("clear")
+    print("Your username is: ", (api.me().screen_name))
+    who_to_follow = input("If you don't specify a username it will save your following list: ")
+    if who_to_follow == "":
+        who_to_follow = api.me().screen_name
+        with open("following.txt", "w") as f:
+            for user in tweepy.Cursor(api.friends, screen_name=who_to_follow, count=200).items():
+                    f.write(user.screen_name + "\n")
 
-# Create a function that follow specified user's followers if user has more than 1000 followers and the follower count is more than followings
-def follow_em():
-    who_to_follow = input("Put the username to follow their followers: ")
-    for follower in tweepy.Cursor(api.followers, screen_name=who_to_follow).items():
-        if not follower.following:
-            try:
-                if follower.followers_count >= 500 and follower.followers_count >= follower.friends_count and not follower.friends_count <= 400:
-                    follower.follow()
-                    print("Followed: ", follower.screen_name)
-                    sleep(randint(16, 42))
-            except tweepy.TweepError as e:
-                print(e.reason)
-            except StopIteration:
-                break
+
 # Main Logic
-
-
 class main:
     def __init__(self):
         os.system("cls") if os.name == "nt" else os.system("clear")
         print("Tiwoto v0.1 | Made by UN5T48L3")
         print("")
         print("What do you want to do?")
-        print("1. Favorite your timeline")
-        print("2. Favorite tweets about #cybersecurity, #hacking, #infosec and follow if the account has more than 50 followers and 100 follows")
-        print("3. Follow other's followers")
-        print("4. Exit" + "\n")
+        print("1. Favorite whole your timeline (last 500 tweets)")
+        print("2. Fav Hashtags")
+        print("3. Follow Users About Those Hashtags")
+        print("4. Save following list as a file of a user" + "\n")
+        print("5. Exit" + "\n")
         choice = int(input("Enter your choice: "))
         if choice == 1:
             os.system("cls") if os.name == "nt" else os.system("clear")
             fav_timeline()
         elif choice == 2:
             os.system("cls") if os.name == "nt" else os.system("clear")
-            fav_follow()
+            ht_fav()
         elif choice == 3:
             os.system("cls") if os.name == "nt" else os.system("clear")
-            follow_em()
+            ht_follow()
         elif choice == 4:
+            os.system("cls") if os.name == "nt" else os.system("clear")
+            save_following()
+        elif choice == 5:
             os.system("cls") if os.name == "nt" else os.system("clear")
             print("Exiting...")
             sleep(1)
@@ -138,12 +142,8 @@ if __name__ == "__main__":
     except Exception as e:
         os.system("cls") if os.name == "nt" else os.system("clear")
         print(e)
-        exception = input("Do you want to try again? (y/n)" + "\n")
-        if exception == "y":
-            main()
-        else:
-            os.system("cls") if os.name == "nt" else os.system("clear")
-            print("Exiting...")
-            sleep(2)
-            os.system("cls") if os.name == "nt" else os.system("clear")
-            exit()
+        os.system("cls") if os.name == "nt" else os.system("clear")
+        print("Exiting...")
+        sleep(2)
+        os.system("cls") if os.name == "nt" else os.system("clear")
+        exit()
