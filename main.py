@@ -2,14 +2,31 @@
 
 import tweepy
 import os
+from os.path import join, dirname
 from random import randint
 from time import sleep
-from creds import *
+from pathlib import Path
+from dotenv import load_dotenv
 
+
+if 'consumer_key' or "access_token" in os.environ:
+    load_dotenv(dotenv_path=join(dirname(__file__), '.env'))
+    dotenv_path = join(dirname(__file__), '.env')
+    load_dotenv(dotenv_path)
+    consumer_key = os.getenv('consumer_key')
+    consumer_secret = os.getenv('consumer_secret')
+    access_token = os.getenv('access_token')
+    access_token_secret = os.getenv('access_token_secret')
+else:
+    print("Please set your API keys in the .env file")
+    print("Exiting...")
+    sleep(2)
+    os.system("cls") if os.name == "nt" else os.system("clear")
+    exit()
 
 # Setup tweepy API Authentication
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_key, access_secret)
+auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 print("Starting...")
 sleep(2)
@@ -73,31 +90,34 @@ def follow_em():
                 print(e.reason)
             except StopIteration:
                 break
+# Main Logic
 
-# Main function
-def main():
-    print("1- Fav your timeline")
-    print("2- Fav + follow hashtags")
-    print("3- Follow users")
-    print("4- Exit")
-    choice = int(input("Enter your choice: "))
-    if choice == 1:
-        os.system("cls") if os.name == "nt" else os.system("clear")
-        fav_timeline()
-    elif choice == 2:
-        os.system("cls") if os.name == "nt" else os.system("clear")
-        fav_follow()
-    elif choice == 3:
-        os.system("cls") if os.name == "nt" else os.system("clear")
-        follow_em()
-    elif choice == 4:
-        os.system("cls") if os.name == "nt" else os.system("clear")
-        exit()
-    else:
-        print("Invalid choice")
-        sleep(2)
-        os.system("cls") if os.name == "nt" else os.system("clear")
-        main()
+
+class main:
+    def __init__(self):
+        print("Welcome to the Twitter Bot!")
+        print("What do you want to do?")
+        print("1. Favorite your timeline")
+        print("2. Favorite tweets about #cybersecurity, #hacking, #infosec")
+        print("3. Follow other's followers")
+        print("4. Exit")
+        choice = int(input("Enter your choice: "))
+        if choice == 1:
+            fav_timeline()
+        elif choice == 2:
+            fav_follow()
+        elif choice == 3:
+            follow_em()
+        elif choice == 4:
+            print("Exiting...")
+            sleep(2)
+            os.system("cls") if os.name == "nt" else os.system("clear")
+            exit()
+        else:
+            print("Invalid choice!")
+            sleep(2)
+            os.system("cls") if os.name == "nt" else os.system("clear")
+            main()
 
 # run the main function
 if __name__ == "__main__":
