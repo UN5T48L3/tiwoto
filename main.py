@@ -20,7 +20,7 @@ if 'consumer_key' or "access_token" in os.environ:
 else:
     print("Please set your API keys in the .env file")
     print("Exiting...")
-    sleep(2)
+    sleep(1)
     os.system("cls") if os.name == "nt" else os.system("clear")
     exit()
 
@@ -29,14 +29,14 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 print("Starting...")
-sleep(2)
+sleep(1)
 os.system("cls") if os.name == "nt" else os.system("clear")
 
 
 # Create a function that favorites latest 10 tweets on your timeline
 def fav_timeline():
     # We will use the cursor to iterate through the tweets
-    for tweet in tweepy.Cursor(api.home_timeline).items(10):
+    for tweet in tweepy.Cursor(api.home_timeline).items(500):
         # We will only favorite the tweets that have not been favorited yet
         if not tweet.favorited:
             try:
@@ -57,7 +57,6 @@ def fav_follow():
     ht3 = input("Enter hashtag 3: ")
     ht4 = input("Enter hashtag 4: ")
     hashtags = (ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4)
-    print(hashtags)
     for tweet in tweepy.Cursor(api.search, q=hashtags, lang="en", result_type="latest").items(999):
         # We will only favorite the tweets that have not been favorited yet
         if not tweet.favorited:
@@ -69,7 +68,7 @@ def fav_follow():
                     if not tweet.user.following and not tweet.user.followers_count >= 50 and not tweet.user.friends_count >= 100:
                         tweet.user.follow()
                         print("Followed: ", tweet.user.screen_name)
-                    sleep(randint(9, 23))
+                    sleep(randint(3, 13))
             except tweepy.TweepError as e:
                 print(e.reason)
             except StopIteration:
@@ -85,7 +84,7 @@ def follow_em():
                 if follower.followers_count >= 500 and follower.followers_count >= follower.friends_count and not follower.friends_count <= 400:
                     follower.follow()
                     print("Followed: ", follower.screen_name)
-                    sleep(randint(16, 32))
+                    sleep(randint(16, 42))
             except tweepy.TweepError as e:
                 print(e.reason)
             except StopIteration:
@@ -95,13 +94,15 @@ def follow_em():
 
 class main:
     def __init__(self):
-        print("Welcome to the Twitter Bot!")
+        os.system("cls") if os.name == "nt" else os.system("clear")
+        print("Tiwoto v0.1 | Made by UN5T48L3")
+        print("")
         print("What do you want to do?")
         print("1. Favorite your timeline")
-        print("2. Favorite tweets about #cybersecurity, #hacking, #infosec")
+        print("2. Favorite tweets about #cybersecurity, #hacking, #infosec and follow if the account has more than 50 followers and 100 follows")
         print("3. Follow other's followers")
         print("4. Exit")
-        choice = int(input("Enter your choice: "))
+        choice = input("Enter your choice: ")
         if choice == 1:
             fav_timeline()
         elif choice == 2:
@@ -115,9 +116,22 @@ class main:
             exit()
         else:
             print("Invalid choice!")
+            exception = input("Do you want to try again? (y/n)")
+            if exception == "y":
+                main()
+            else:
+                print("Exiting...")
+                sleep(2)
+                os.system("cls") if os.name == "nt" else os.system("clear")
+                exit()
+        
+        if KeyboardInterrupt == True:
+            print("Exiting...")
             sleep(2)
             os.system("cls") if os.name == "nt" else os.system("clear")
-            main()
+            exit()
+        print("Exiting...")
+
 
 # run the main function
 if __name__ == "__main__":
