@@ -19,7 +19,7 @@ if 'consumer_key' or "access_token" in os.environ:
     access_token_secret = os.getenv('access_token_secret')
 else:
     print("Please set your API keys in the .env file")
-    print("Exiting...")
+    print("Exiting..." + "\n")
     sleep(1)
     os.system("cls") if os.name == "nt" else os.system("clear")
     exit()
@@ -101,38 +101,49 @@ class main:
         print("1. Favorite your timeline")
         print("2. Favorite tweets about #cybersecurity, #hacking, #infosec and follow if the account has more than 50 followers and 100 follows")
         print("3. Follow other's followers")
-        print("4. Exit")
-        choice = input("Enter your choice: ")
+        print("4. Exit" + "\n")
+        choice = int(input("Enter your choice: "))
         if choice == 1:
+            os.system("cls") if os.name == "nt" else os.system("clear")
             fav_timeline()
         elif choice == 2:
+            os.system("cls") if os.name == "nt" else os.system("clear")
             fav_follow()
         elif choice == 3:
+            os.system("cls") if os.name == "nt" else os.system("clear")
             follow_em()
         elif choice == 4:
+            os.system("cls") if os.name == "nt" else os.system("clear")
             print("Exiting...")
-            sleep(2)
+            sleep(1)
             os.system("cls") if os.name == "nt" else os.system("clear")
             exit()
         else:
-            print("Invalid choice!")
-            exception = input("Do you want to try again? (y/n)")
-            if exception == "y":
-                main()
-            else:
+                print("Invalid choice!" + "\n")
                 print("Exiting...")
-                sleep(2)
+                sleep(1)
                 os.system("cls") if os.name == "nt" else os.system("clear")
                 exit()
-        
-        if KeyboardInterrupt == True:
+
+# run the main function
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        os.system("cls") if os.name == "nt" else os.system("clear")
+        print("Exiting...")
+        sleep(1)
+        os.system("cls") if os.name == "nt" else os.system("clear")
+        exit()
+    except Exception as e:
+        os.system("cls") if os.name == "nt" else os.system("clear")
+        print(e)
+        exception = input("Do you want to try again? (y/n)" + "\n")
+        if exception == "y":
+            main()
+        else:
+            os.system("cls") if os.name == "nt" else os.system("clear")
             print("Exiting...")
             sleep(2)
             os.system("cls") if os.name == "nt" else os.system("clear")
             exit()
-        print("Exiting...")
-
-
-# run the main function
-if __name__ == "__main__":
-    main()
