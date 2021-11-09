@@ -71,18 +71,17 @@ def ht_fav():
     ht2 = (str(input("Enter hashtag 2: ")))
     ht3 = (str(input("Enter hashtag 3: ")))
     ht4 = (str(input("Enter hashtag 4: ")))
-    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4, result_type="recent", lang="en").items(500):
-        if not tweet.favorited:
-            try:
-                if tweet.retweet_count >= 9:
-                    tweet.favorite()
-                    print("Liked: ", tweet.text + "\n")
-                    sleep(randint(1, 3))
-            except tweepy.TweepError as e:
-                print(e.reason)
-            except StopIteration:
-                break
-
+    print("Started liking latest tweets about: " + ht1 + ", " + ht2 + ", " + ht3 + " and " + ht4 + "\n")
+    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4 + "-exclude:retweet", result_type="recent", lang="en").items(800):
+        try:
+            if not tweet.user.following and not tweet.favorite_count <= 0 and not tweet.retweet_count <= 0:
+                tweet.favorite()
+                print("Liked: " + tweet.text + "\n") 
+                sleep(randint(1, 2))
+        except tweepy.TweepError as e:
+            print(e.reason)
+        except StopIteration:
+            break
 def save_following():
     os.system("cls") if os.name == "nt" else os.system("clear")
     print("Your username is: ", (api.me().screen_name))
