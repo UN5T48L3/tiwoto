@@ -51,12 +51,12 @@ def ht_follow():
     ht2 = (str(input("Enter hashtag 2: ")))
     ht3 = (str(input("Enter hashtag 3: ")))
     ht4 = (str(input("Enter hashtag 4: ")))
-    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4 + "-exclude:retweet", result_type="recent", lang="en").items(500):
+    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4 + " -exclude:retweet", result_type="recent", lang="en").items(500):
         try:
             if not tweet.user.following and not tweet.user.friends_count <= 300 and not tweet.user.followers_count <= 999:
                 api.create_friendship(tweet.user.id)
-                print("Followed [", tweet.user.screen_name + "] and liked their this tweet:")
-                sleep(randint(0.3, 2.3))
+                print("Followed ====> [" + tweet.user.screen_name + "] and liked their this tweet:")
+                sleep(randint(1, 5))
                 tweet.favorite()
                 print("https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str + "\n")
                 sleep(randint(2, 12))
@@ -71,17 +71,17 @@ def ht_fav():
     ht2 = (str(input("Enter hashtag 2: ")))
     ht3 = (str(input("Enter hashtag 3: ")))
     ht4 = (str(input("Enter hashtag 4: ")))
-    print("Started liking latest tweets about: " + ht1 + ", " + ht2 + ", " + ht3 + " and " + ht4 + "\n")
-    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4 + "-exclude:retweet", result_type="recent", lang="en").items(800):
+    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4 + " -exclude:retweet", result_type="recent", lang="en").items(500):
         try:
-            if not tweet.user.following and not tweet.favorite_count <= 0 and not tweet.retweet_count <= 0:
+            if not tweet.favorited and not tweet.user.following and not tweet.favorite_count <= 100:
                 tweet.favorite()
-                print("Liked: " + tweet.text + "\n") 
+                print("Favorited ===> [" + tweet.user.screen_name + "]""")
                 sleep(randint(1, 2))
         except tweepy.TweepError as e:
             print(e.reason)
         except StopIteration:
             break
+
 def save_following():
     os.system("cls") if os.name == "nt" else os.system("clear")
     print("Your username is: ", (api.me().screen_name))
