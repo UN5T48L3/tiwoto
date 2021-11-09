@@ -5,8 +5,8 @@ import os
 from os.path import join, dirname
 from random import randint
 from time import sleep
-from pathlib import Path
 from dotenv import load_dotenv
+from tweepy.models import Friendship
 
 
 if 'consumer_key' or "access_token" in os.environ:
@@ -33,48 +33,51 @@ os.system("cls") if os.name == "nt" else os.system("clear")
 
 
 def fav_timeline():
-    for tweet in tweepy.Cursor(api.home_timeline).items(500):
-        if not tweet.favorited:
+    for tweets in api.home_timeline(exclude_replies=True, include_rts=False, count=500):
+        if not tweets.favorited:
             try:
-                tweet.favorite()
-                print("Liked: ", tweet.text + "\n")
-                sleep(randint(4, 15))
+                tweets.favorite()
+                print("Liked: ", tweets.text)
+                print("By: " + tweets.user.screen_name + "\n")
+                sleep(randint(1, 3))
             except tweepy.TweepError as e:
                 print(e.reason)
             except StopIteration:
                 break
 
 def ht_follow():
-    print("Please enter 4 hashtags!")
+    print("Follow people tweeting about;")
     ht1 = (str(input("Enter hashtag 1: ")))
     ht2 = (str(input("Enter hashtag 2: ")))
     ht3 = (str(input("Enter hashtag 3: ")))
     ht4 = (str(input("Enter hashtag 4: ")))
-    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4, lang="en",  ).items(500):
-        if not tweet.favorited and not tweet.retweeted:
-            try:
-                if tweet.retweet_count >= 9 and not tweet.user.following:
-                    tweet.user.follow()
-                    print("Followed: ", tweet.user.screen_name + "\n")
-                    sleep(randint(1, 5))
-            except tweepy.TweepError as e:
-                print(e.reason)
-            except StopIteration:
-                break
+    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4 + "-exclude:retweet", result_type="recent", lang="en").items(500):
+        try:
+            if not tweet.user.following and not tweet.user.friends_count <= 300 and not tweet.user.followers_count <= 999:
+                api.create_friendship(tweet.user.id)
+                print("Followed [", tweet.user.screen_name + "] and liked their this tweet:")
+                sleep(randint(0.3, 2.3))
+                tweet.favorite()
+                print("https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str + "\n")
+                sleep(randint(2, 12))
+        except tweepy.TweepError as e:
+            print(e.reason)
+        except StopIteration:
+            break
 
 def ht_fav():
-    print("Please enter 4 hashtags!")
+    print("Favorite hashtags;")
     ht1 = (str(input("Enter hashtag 1: ")))
     ht2 = (str(input("Enter hashtag 2: ")))
     ht3 = (str(input("Enter hashtag 3: ")))
     ht4 = (str(input("Enter hashtag 4: ")))
-    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4, lang="en" ).items(500):
+    for tweet in tweepy.Cursor(api.search, q=ht1 + " OR " + ht2 + " OR " + ht3 + " OR " + ht4, result_type="recent", lang="en").items(500):
         if not tweet.favorited:
             try:
                 if tweet.retweet_count >= 9:
                     tweet.favorite()
                     print("Liked: ", tweet.text + "\n")
-                    sleep(randint(2, 5))
+                    sleep(randint(1, 3))
             except tweepy.TweepError as e:
                 print(e.reason)
             except StopIteration:
@@ -83,13 +86,16 @@ def ht_fav():
 def save_following():
     os.system("cls") if os.name == "nt" else os.system("clear")
     print("Your username is: ", (api.me().screen_name))
-    who_to_follow = input("If you don't specify a username it will save your following list: ")
+    who_to_follow = ""
     if who_to_follow == "":
         who_to_follow = api.me().screen_name
         with open("following.txt", "w") as f:
             for user in tweepy.Cursor(api.friends, screen_name=who_to_follow, count=200).items():
                     f.write(user.screen_name + "\n")
 
+# Unfollow users who don't follow back
+def detect_unfollow():
+    print("TODO")
 
 # Main Logic
 class main:
@@ -101,8 +107,9 @@ class main:
         print("1. Favorite whole your timeline (last 500 tweets)")
         print("2. Fav Hashtags")
         print("3. Follow Users About Those Hashtags")
-        print("4. Save following list as a file of a user" + "\n")
-        print("5. Exit" + "\n")
+        print("4. Save following list as a file of a user")
+        print("5. Unfollow recently followed. " + "\n")
+        print("6. Exit" + "\n")
         choice = int(input("Enter your choice: "))
         if choice == 1:
             os.system("cls") if os.name == "nt" else os.system("clear")
@@ -118,14 +125,18 @@ class main:
             save_following()
         elif choice == 5:
             os.system("cls") if os.name == "nt" else os.system("clear")
+            detect_unfollow()
+        elif choice == 6:
+            os.system("cls") if os.name == "nt" else os.system("clear")
             print("Exiting...")
             sleep(1)
             os.system("cls") if os.name == "nt" else os.system("clear")
             exit()
         else:
+                os.system("cls") if os.name == "nt" else os.system("clear")
                 print("Invalid choice!" + "\n")
                 print("Exiting...")
-                sleep(1)
+                sleep(2)
                 os.system("cls") if os.name == "nt" else os.system("clear")
                 exit()
 
@@ -134,16 +145,10 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        os.system("cls") if os.name == "nt" else os.system("clear")
         print("Exiting...")
-        sleep(1)
-        os.system("cls") if os.name == "nt" else os.system("clear")
+        sleep(0.5)
         exit()
     except Exception as e:
-        os.system("cls") if os.name == "nt" else os.system("clear")
-        print(e)
-        os.system("cls") if os.name == "nt" else os.system("clear")
-        print("Exiting...")
-        sleep(2)
-        os.system("cls") if os.name == "nt" else os.system("clear")
+        print(e, "<==== This is the error! Fix it.")
+        sleep(0.1)
         exit()
