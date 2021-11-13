@@ -1,4 +1,4 @@
-### Tiwoto
+## Tiwoto
 -------------
 
 Tiwoto is a simple python program that automates some kind of behaviors and keep your account active.
@@ -19,5 +19,5 @@ pip3 install -r requirements.txt
 
 ##### And run application with:
 ```bash
-python3 main.py
+python3 tiwoto.py
 ```

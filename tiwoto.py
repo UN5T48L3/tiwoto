@@ -1,8 +1,32 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Warning: Twitter API rate limits are enforced.
-#          Do not run this script more than once an hour.
-#
+
+###############################################################################
+# This file is part of Tiwoto Open Project.                                   #
+#                                                                             #
+# Tiwoto Open Project is free software: you can redistribute it and/or        #
+# modify it under the terms of the GNU General Public License as published by #
+# the Free Software Foundation, either version 3 of the License, or (at your  #
+# option) any later version.                                                  #
+#                                                                             #
+# Tiwoto Open Project is distributed in the hope that it will be useful, but  #
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY  #
+# or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for #
+# more details.                                                               #
+#                                                                             #
+# You should have received a copy of the GNU General Public License along     #
+# with Tiwoto Open Project. If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+# WARNING:                                                                    #
+# If you are not sure about about Twitter API rate limits,                    #
+# please do not use this script more than once an hour.                       #
+# because if your account reachs Twitter API rate limits too often,           #
+# your account might be suspended.                                            #
+#                                                                             #
+# This program coded by Mehmetcan Yildiz aka UN5T48L3 for fun. ^^             #
+###############################################################################
+
 
 import tweepy
 import os
