@@ -65,14 +65,15 @@ def fav_timeline():
     i = 0
     value = input("How many tweets you want to like: ")
     while i < int(value):
-        for tweet in api.home_timeline():
+        for tweet in tweepy.Cursor(api.home_timeline).items(int(value)):
             try:
                 if not tweet.favorited and not i == int(value):
+                    sleep(randint(1, 3))
                     tweet.favorite()
                     i += 1
                     print(
                         "🖤 Liked => [https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str + "]")
-                    sleep(randint(2, 11))
+                    sleep(randint(3, 18))
             except tweepy.TweepyException as err1:
                 print(err1)
                 i -= 1
@@ -94,14 +95,15 @@ def ht_fav():
     i = 0
     value = input("How many tweets you want to like: ")
     while i < int(value):
-        for tweet in api.search_tweets(q=ht1 + " OR " + ht2 + " -exclude:retweet", result_type="recent", lang="en"):
+        for tweet in tweepy.Cursor(api.search_tweets, q=ht1 + " OR " + ht2 + " -exclude:retweet", result_type="recent", lang="en").items(int(value)):
             try:
-                if not tweet.favorited and not i == int(value) and not tweet.favorite_count >= 10:
+                if not tweet.favorited and not i == int(value) and not tweet.favorite_count >= 8:
+                    sleep(randint(2, 7))
                     tweet.favorite()
                     i += 1
                     print(
                         "🖤 Liked => [https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str + "]")
-                    sleep(randint(1, 14))
+                    sleep(randint(8, 19))
             except tweepy.TweepyException as err1:
                 i -= 1
                 print(err1)
@@ -116,20 +118,21 @@ def ht_fav():
 
 
 def ht_follow():
-    print("Follow and like: \n")
+    print("Follow Users: \n")
     ht1 = input(str("Enter a word or hashtag: "))
     ht2 = input(str("Enter another word or hashtag: "))
     print("\n")
     i = 0
     value = input("How many users you want to follow: ")
     while i < int(value):
-        for tweet in api.search_tweets(q=ht1 + " OR " + ht2 + " -exclude:retweet", result_type="recent", lang="en"):
+        for tweet in tweepy.Cursor(api.search_tweets, q=ht1 + " OR " + ht2 + " -exclude:retweet", result_type="recent", lang="en").items(int(value)):
             try:
                 if not tweet.user.following and not i == int(value) and not tweet.favorite_count >= 12:
+                    sleep(randint(3, 8))
                     tweet.user.follow()
                     i += 1
                     print("➕ Followed => [https://twitter.com/" + tweet.user.screen_name + "]")
-                    sleep(randint(2, 39))
+                    sleep(randint(6, 39))
             except tweepy.TweepyException as err1:
                 i -= 1
                 print(err1)
@@ -179,9 +182,8 @@ def detect_unfollow():
 class MainStuff:
     def __init__(self):
         os.system("cls") if os.name == "nt" else os.system("clear")
-        print("Tiwoto v0.1 | Made by UN5T48L3")
-        print("")
-        print("What do you want to do?")
+        print("Tiwoto - Twitter Automation Tool For Growing Organic Followers", "\n")
+        print("Select an option:")
         print("1. Timeline likes")
         print("2. Like tweets.")
         print("3. Search and follow users.")
