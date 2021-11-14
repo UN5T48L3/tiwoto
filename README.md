@@ -1,6 +1,10 @@
 ## Tiwoto
 -------------
 
+![tiwoto-v01](https://user-images.githubusercontent.com/39417235/141679312-370c5f4c-fb86-4512-8032-02df39823537.gif)
+
+
+
 Tiwoto is a simple python program that automates some kind of behaviors and keep your account active.
 
 
