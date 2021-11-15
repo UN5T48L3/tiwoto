@@ -76,7 +76,6 @@ def fav_timeline():
                     sleep(randint(3, 18))
             except tweepy.TweepyException as err1:
                 print(err1)
-                i -= 1
             except StopIteration:
                 break
     else:
@@ -101,11 +100,10 @@ def ht_fav():
                     sleep(randint(2, 7))
                     tweet.favorite()
                     i += 1
-                    print(
+                    print( 
                         "🖤 Liked => [https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str + "]")
                     sleep(randint(8, 19))
             except tweepy.TweepyException as err1:
-                i -= 1
                 print(err1)
             except StopIteration:
                 break
@@ -134,7 +132,6 @@ def ht_follow():
                     print("➕ Followed => [https://twitter.com/" + tweet.user.screen_name + "]")
                     sleep(randint(6, 39))
             except tweepy.TweepyException as err1:
-                i -= 1
                 print(err1)
             except StopIteration:
                 break
